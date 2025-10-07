@@ -2,6 +2,12 @@
 
 Uma API REST escalável construída com Elysia, TypeScript, Prisma e PostgreSQL.
 
+## Links Importantes
+
+- **Produção**: [https://rest-api-bun.onrender.com](https://rest-api-bun.onrender.com)
+- **Documentação (Swagger)**: [https://rest-api-bun.onrender.com/docs](https://rest-api-bun.onrender.com/docs)
+- **Health Check**: [https://rest-api-bun.onrender.com/health](https://rest-api-bun.onrender.com/health)
+
 ## Funcionalidades
 
 ### Usuários
@@ -42,9 +48,17 @@ src/
         └── routes.ts
 ```
 
-## Configuração
+## Configuração Local
 
-1. Instale as dependências:
+### Pré-requisitos
+
+- [Bun](https://bun.sh/) instalado
+- [Docker](https://www.docker.com/) e Docker Compose
+- PostgreSQL (via Docker ou local)
+
+### Instalação
+
+1. Clone o repositório e instale as dependências:
 ```bash
 bun install
 ```
@@ -52,6 +66,13 @@ bun install
 2. Configure as variáveis de ambiente:
 ```bash
 cp .env.example .env
+```
+
+Edite o arquivo `.env` com suas configurações:
+```env
+DATABASE_URL="postgresql://usuario:senha@localhost:5432/nome_banco"
+PORT=3001
+NODE_ENV=development
 ```
 
 3. Inicie o PostgreSQL com Docker:
@@ -70,12 +91,40 @@ bun run db:migrate
 bun run dev
 ```
 
-## Exemplos de Teste da API
+A API estará disponível em `http://localhost:3001`
+
+## Exemplos de Uso da API
+
+> **Nota**: Os exemplos abaixo usam a URL de produção. Para testar localmente, substitua `https://rest-api-bun.onrender.com` por `http://localhost:3001`
+
+### Verificação de Saúde
+
+Verifique se a API está funcionando:
+
+```bash
+curl https://rest-api-bun.onrender.com/health
+```
+
+**Resposta:**
+```json
+{
+  "success": true,
+  "status": "saudável",
+  "services": {
+    "database": "conectado",
+    "server": "rodando"
+  },
+  "meta": {
+    "timestamp": "2024-01-15T10:50:00.000Z",
+    "uptime": 120.5
+  }
+}
+```
 
 ### Criando um Usuário
 
 ```bash
-curl -X POST http://localhost:3001/users \
+curl -X POST https://rest-api-bun.onrender.com/users \
   -H "Content-Type: application/json" \
   -d '{
     "name": "João Silva",
@@ -83,7 +132,7 @@ curl -X POST http://localhost:3001/users \
   }'
 ```
 
-**Resposta Esperada:**
+**Resposta:**
 ```json
 {
   "success": true,
@@ -101,46 +150,13 @@ curl -X POST http://localhost:3001/users \
 }
 ```
 
-### Criando uma Tarefa
-
-```bash
-curl -X POST http://localhost:3001/tasks \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Finalizar documentação do projeto",
-    "description": "Escrever documentação completa para o projeto da API REST",
-    "status": "PENDENTE",
-    "userId": "550e8400-e29b-41d4-a716-446655440000"
-  }'
-```
-
-**Resposta Esperada:**
-```json
-{
-  "success": true,
-  "data": {
-    "id": "660e8400-e29b-41d4-a716-446655440001",
-    "title": "Finalizar documentação do projeto",
-    "description": "Escrever documentação completa para o projeto da API REST",
-    "status": "PENDENTE",
-    "userId": "550e8400-e29b-41d4-a716-446655440000",
-    "createdAt": "2024-01-15T10:35:00.000Z",
-    "updatedAt": "2024-01-15T10:35:00.000Z"
-  },
-  "message": "Tarefa criada com sucesso",
-  "meta": {
-    "timestamp": "2024-01-15T10:35:00.000Z"
-  }
-}
-```
-
 ### Listando Usuários com Paginação
 
 ```bash
-curl "http://localhost:3001/users?page=1&limit=10"
+curl "https://rest-api-bun.onrender.com/users?page=1&limit=10"
 ```
 
-**Resposta Esperada:**
+**Resposta:**
 ```json
 {
   "success": true,
@@ -167,24 +183,30 @@ curl "http://localhost:3001/users?page=1&limit=10"
 }
 ```
 
+### Buscando um Usuário Específico
+
+```bash
+curl https://rest-api-bun.onrender.com/users/550e8400-e29b-41d4-a716-446655440000
+```
+
 ### Atualizando um Usuário
 
 ```bash
-curl -X PUT http://localhost:3001/users/550e8400-e29b-41d4-a716-446655440000 \
+curl -X PUT https://rest-api-bun.onrender.com/users/550e8400-e29b-41d4-a716-446655440000 \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "João Atualizado",
+    "name": "João Silva Atualizado",
     "email": "joao.atualizado@exemplo.com"
   }'
 ```
 
-**Resposta Esperada:**
+**Resposta:**
 ```json
 {
   "success": true,
   "data": {
     "id": "550e8400-e29b-41d4-a716-446655440000",
-    "name": "João Atualizado",
+    "name": "João Silva Atualizado",
     "email": "joao.atualizado@exemplo.com",
     "createdAt": "2024-01-15T10:30:00.000Z",
     "updatedAt": "2024-01-15T10:45:00.000Z"
@@ -196,41 +218,184 @@ curl -X PUT http://localhost:3001/users/550e8400-e29b-41d4-a716-446655440000 \
 }
 ```
 
-## Documentação
+### Deletando um Usuário
 
-Acesse a documentação interativa com exemplos ao vivo em [http://localhost:3001/docs](http://localhost:3001/docs)
-
-## Verificação de Saúde
-
-Verifique se a API está saudável:
 ```bash
-curl http://localhost:3001/health
+curl -X DELETE https://rest-api-bun.onrender.com/users/550e8400-e29b-41d4-a716-446655440000
 ```
 
-**Resposta Esperada:**
+### Criando uma Tarefa
+
+```bash
+curl -X POST https://rest-api-bun.onrender.com/tasks \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Finalizar documentação do projeto",
+    "description": "Escrever documentação completa para o projeto da API REST",
+    "status": "PENDING",
+    "userId": "550e8400-e29b-41d4-a716-446655440000"
+  }'
+```
+
+**Resposta:**
 ```json
 {
   "success": true,
-  "status": "healthy",
-  "services": {
-    "database": "connected",
-    "server": "running"
+  "data": {
+    "id": "660e8400-e29b-41d4-a716-446655440001",
+    "title": "Finalizar documentação do projeto",
+    "description": "Escrever documentação completa para o projeto da API REST",
+    "status": "PENDING",
+    "userId": "550e8400-e29b-41d4-a716-446655440000",
+    "createdAt": "2024-01-15T10:35:00.000Z",
+    "updatedAt": "2024-01-15T10:35:00.000Z"
   },
+  "message": "Tarefa criada com sucesso",
   "meta": {
-    "timestamp": "2024-01-15T10:50:00.000Z",
-    "uptime": 120.5
+    "timestamp": "2024-01-15T10:35:00.000Z"
   }
 }
 ```
 
-## Recursos Avançados
+### Listando Tarefas com Filtros
 
-- Validação com Zod
-- Paginação e filtros
-- CORS configurado
-- Tratamento centralizado de erros
-- Registro de requisições
-- Documentação OpenAPI/Swagger
-- TypeScript modo estrito
-- Formatação de código com Biome
-- Arquitetura escalável (padrão Repository + Service)
+```bash
+# Todas as tarefas
+curl "https://rest-api-bun.onrender.com/tasks?page=1&limit=10"
+
+# Tarefas pendentes
+curl "https://rest-api-bun.onrender.com/tasks?status=PENDING"
+
+# Tarefas de um usuário específico
+curl "https://rest-api-bun.onrender.com/tasks?userId=550e8400-e29b-41d4-a716-446655440000"
+
+# Busca por texto
+curl "https://rest-api-bun.onrender.com/tasks?search=documentação"
+
+# Ordenação
+curl "https://rest-api-bun.onrender.com/tasks?sortBy=createdAt&sortOrder=desc"
+```
+
+### Obtendo Estatísticas das Tarefas
+
+```bash
+curl https://rest-api-bun.onrender.com/tasks/statistics
+```
+
+**Resposta:**
+```json
+{
+  "success": true,
+  "data": {
+    "total": 25,
+    "pending": 15,
+    "done": 10,
+    "completionRate": 40
+  },
+  "meta": {
+    "timestamp": "2024-01-15T12:00:00.000Z"
+  }
+}
+```
+
+### Buscando Tarefas de um Usuário
+
+```bash
+curl https://rest-api-bun.onrender.com/tasks/user/550e8400-e29b-41d4-a716-446655440000
+```
+
+### Atualizando uma Tarefa
+
+```bash
+curl -X PUT https://rest-api-bun.onrender.com/tasks/660e8400-e29b-41d4-a716-446655440001 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Documentação finalizada",
+    "status": "DONE"
+  }'
+```
+
+### Deletando uma Tarefa
+
+```bash
+curl -X DELETE https://rest-api-bun.onrender.com/tasks/660e8400-e29b-41d4-a716-446655440001
+```
+
+## Parâmetros de Query
+
+### Paginação
+- `page` - Número da página (padrão: 1)
+- `limit` - Itens por página (padrão: 10, máximo: 100)
+
+### Filtros para Usuários
+- `search` - Busca por nome ou email
+- `sortBy` - Campo para ordenação: `name`, `email`, `createdAt`
+- `sortOrder` - Ordem: `asc` ou `desc`
+
+### Filtros para Tarefas
+- `search` - Busca no título e descrição
+- `status` - Filtra por status: `PENDING`, `IN_PROGRESS`, `DONE`
+- `userId` - Filtra por ID do usuário
+- `sortBy` - Campo para ordenação: `title`, `status`, `createdAt`
+- `sortOrder` - Ordem: `asc` ou `desc`
+
+## Tecnologias Utilizadas
+
+- **Runtime**: [Bun](https://bun.sh/)
+- **Framework**: [Elysia](https://elysiajs.com/)
+- **Linguagem**: [TypeScript](https://www.typescriptlang.org/)
+- **ORM**: [Prisma](https://www.prisma.io/)
+- **Banco de Dados**: PostgreSQL (hospedado no [Supabase](https://supabase.com/))
+- **Validação**: [Zod](https://zod.dev/)
+- **Documentação**: Swagger/OpenAPI
+- **Deploy**: [Render](https://render.com/)
+
+## Recursos
+
+- ✅ Validação de dados com Zod
+- ✅ Paginação e filtros avançados
+- ✅ CORS configurado
+- ✅ Tratamento centralizado de erros
+- ✅ Registro de requisições (logs)
+- ✅ Documentação OpenAPI/Swagger interativa
+- ✅ TypeScript em modo estrito
+- ✅ Formatação de código com Biome
+- ✅ Arquitetura escalável (Repository Pattern + Service Layer)
+- ✅ Mensagens de erro em português
+- ✅ Health check endpoint
+
+## Scripts Disponíveis
+
+```bash
+# Desenvolvimento
+bun run dev
+
+# Produção
+bun run start
+
+# Gerar Prisma Client
+bun run db:generate
+
+# Executar migrations
+bun run db:migrate
+
+# Abrir Prisma Studio
+bun run db:studio
+
+# Formatação de código
+bun run format
+```
+
+## Contribuindo
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
+
+## Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## Autor
+
+**Guilherme Alves de Souza**
+- Email: 97guilherme.alves@gmail.com
+- GitHub: [@guiialves](https://github.com/guiialves)
