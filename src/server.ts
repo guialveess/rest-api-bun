@@ -7,10 +7,8 @@ import { taskRoutes } from '@/modules/tasks/routes.js'
 import { prisma } from '@/lib/database.js'
 import { Server } from 'http'
 
-const env = {
-  PORT: 3001,
-  NODE_ENV: 'development'
-}
+const port = Number(process.env.PORT) || 3001
+const nodeEnv = process.env.NODE_ENV || 'development'
 
 const app = new Elysia()
   .use(globalMiddleware)
@@ -32,7 +30,7 @@ const app = new Elysia()
       },
       servers: [
         {
-          url: `http://localhost:${env.PORT}`,
+          url: `http://localhost:${port}`,
           description: 'Servidor de desenvolvimento'
         }
       ],
@@ -81,7 +79,7 @@ const app = new Elysia()
     docs: '/docs',
     meta: {
       timestamp: new Date().toISOString(),
-      environment: env.NODE_ENV
+      environment: nodeEnv
     }
   }), {
     tags: ['Health'],
@@ -189,8 +187,8 @@ const app = new Elysia()
   })
   .use(userRoutes)
   .use(taskRoutes)
-  .listen(env.PORT)
+  .listen(port)
 
-console.log(`Servidor rodando na porta ${env.PORT}`)
-console.log(`Documentação da API: http://localhost:${env.PORT}/docs`)
-console.log(`Verificação de Saúde: http://localhost:${env.PORT}/health`)
+console.log(`Servidor rodando na porta ${port}`)
+console.log(`Documentação da API: http://localhost:${port}/docs`)
+console.log(`Verificação de Saúde: http://localhost:${port}/health`)

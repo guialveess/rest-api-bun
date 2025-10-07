@@ -75,7 +75,7 @@ bun run dev
 ### Criando um Usuário
 
 ```bash
-curl -X POST http://localhost:37421/users \
+curl -X POST http://localhost:3001/users \
   -H "Content-Type: application/json" \
   -d '{
     "name": "João Silva",
@@ -104,7 +104,7 @@ curl -X POST http://localhost:37421/users \
 ### Criando uma Tarefa
 
 ```bash
-curl -X POST http://localhost:37421/tasks \
+curl -X POST http://localhost:3001/tasks \
   -H "Content-Type: application/json" \
   -d '{
     "title": "Finalizar documentação do projeto",
@@ -137,7 +137,7 @@ curl -X POST http://localhost:37421/tasks \
 ### Listando Usuários com Paginação
 
 ```bash
-curl "http://localhost:37421/users?page=1&limit=10&search=joão&sortBy=createdAt&sortOrder=desc"
+curl "http://localhost:3001/users?page=1&limit=10"
 ```
 
 **Resposta Esperada:**
@@ -170,7 +170,7 @@ curl "http://localhost:37421/users?page=1&limit=10&search=joão&sortBy=createdAt
 ### Atualizando um Usuário
 
 ```bash
-curl -X PUT http://localhost:37421/users/550e8400-e29b-41d4-a716-446655440000 \
+curl -X PUT http://localhost:3001/users/550e8400-e29b-41d4-a716-446655440000 \
   -H "Content-Type: application/json" \
   -d '{
     "name": "João Atualizado",
@@ -198,13 +198,13 @@ curl -X PUT http://localhost:37421/users/550e8400-e29b-41d4-a716-446655440000 \
 
 ## Documentação
 
-Acesse a documentação interativa com exemplos ao vivo em [http://localhost:37421/docs](http://localhost:37421/docs)
+Acesse a documentação interativa com exemplos ao vivo em [http://localhost:3001/docs](http://localhost:3001/docs)
 
 ## Verificação de Saúde
 
 Verifique se a API está saudável:
 ```bash
-curl http://localhost:37421/health
+curl http://localhost:3001/health
 ```
 
 **Resposta Esperada:**
